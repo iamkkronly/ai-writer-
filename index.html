@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Book Writer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        #search-box {
+            width: 80%;
+            max-width: 400px;
+            padding: 10px;
+            margin: 10px;
+        }
+        #generate-btn {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #content {
+            background: white;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>AI Book Writer</h1>
+    <p>Enter a topic and let AI generate book content.</p>
+
+    <input type="text" id="search-box" placeholder="Enter book topic...">
+    <button id="generate-btn" onclick="generateBook()">Generate Book</button>
+
+    <div id="content"></div>
+
+    <script>
+        async function generateBook() {
+            let topic = document.getElementById("search-box").value;
+            let apiKey = "AIzaSyCag00cNmhpP9AvftQtHfsKurU1vqripOw";  // Replace with your Gemini API key
+
+            let requestBody = {
+                contents: [{ parts: [{ text: `Write a detailed book introduction on the topic: "${topic}"` }] }],
+            };
+
+            let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody)
+            });
+
+            let data = await response.json();
+            let bookContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "Error generating book content.";
+
+            document.getElementById("content").innerHTML = `
+                <h2>Generated Book Content</h2>
+                <p><strong>${topic}</strong></p>
+                <p>${bookContent}</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
